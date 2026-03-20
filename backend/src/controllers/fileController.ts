@@ -6,25 +6,39 @@ import { RetriveFileUseCase } from "../use-cases/file/retrive/retriveFilesUseCas
 class FileController {
   constructor(
     private readonly uploadFileUseCase: UploadFileUseCase,
-    private readonly retriveFileUseCase: RetriveFileUseCase
+    private readonly retriveFileUseCase: RetriveFileUseCase,
   ) {}
 
   public async upload(req: Request, res: Response) {
     try {
+      const folderId = req.headers.folderid
+        ? Number(req.headers.folderid)
+        : null;
+
       const response = await this.uploadFileUseCase.execute({
         fileName: req.headers.fileName as string,
         userId: Number(req.headers.user),
+        folderId,
       });
 
       res.status(200).send({ file: response });
     } catch (error) {
-      res.status(500).send({ message: error.message });
+      res.status(500).send({ message: error });
     }
   }
 
   public async list(req: Request, res: Response) {
+    const folderId = req.query.folderId;
+    const parsedFolderId =
+      folderId !== undefined
+        ? folderId === "null"
+          ? null
+          : Number(folderId)
+        : undefined;
+
     const response = await this.retriveFileUseCase.execute(
-      Number(req.headers.user)
+      Number(req.headers.user),
+      parsedFolderId,
     );
 
     res.status(200).send({ files: response });
@@ -33,5 +47,5 @@ class FileController {
 
 export const fileController = new FileController(
   new UploadFileUseCase(new FileRepository()),
-  new RetriveFileUseCase(new FileRepository())
+  new RetriveFileUseCase(new FileRepository()),
 );

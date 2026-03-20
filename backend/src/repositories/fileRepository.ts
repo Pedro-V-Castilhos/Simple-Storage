@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { AppDataSource } from "../database/appDataSource";
 import { File } from "../entities";
 import { UploadFileRequestDto } from "../use-cases/file/uploadFile/uploadFileRequest.dto";
@@ -17,6 +17,16 @@ export class FileRepository {
   public async findByUserId(userId: number): Promise<File[]> {
     return this.fileRepository.findBy({
       userId,
+    });
+  }
+
+  public async findByUserIdAndFolder(
+    userId: number,
+    folderId: number | null,
+  ): Promise<File[]> {
+    return this.fileRepository.findBy({
+      userId,
+      folderId: folderId ?? IsNull(),
     });
   }
 }

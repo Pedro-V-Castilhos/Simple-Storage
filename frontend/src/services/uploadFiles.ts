@@ -1,6 +1,6 @@
 import { getConstants } from "@/constants";
 
-export const uploadFiles = async (file: any) => {
+export const uploadFiles = async (file: any, folderId?: number | null) => {
   if (!file) throw Error("Files not Found");
 
   const { url } = getConstants();
@@ -10,11 +10,17 @@ export const uploadFiles = async (file: any) => {
 
   const token = localStorage.getItem(getConstants().LOCAL_STORAGE_TOKEN);
 
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  if (folderId !== undefined && folderId !== null) {
+    headers["folderid"] = String(folderId);
+  }
+
   const response = await fetch(`${url}/file/upload`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
     body: formData,
   });
 

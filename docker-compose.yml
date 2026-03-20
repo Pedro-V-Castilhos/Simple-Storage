@@ -5,7 +5,8 @@ services:
     build: ./backend
     command: npm run dev
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "3001:3001"
     volumes:
@@ -24,6 +25,8 @@ services:
     image: postgres
     restart: always
     shm_size: 128mb
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: example

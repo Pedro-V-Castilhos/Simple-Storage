@@ -24,7 +24,7 @@ export default function Register() {
 
       // Fazer login automáticamente após o registro
       const loginResponse = await loginService({ email, password });
-      
+
       localStorage.setItem(getConstants().LOCAL_STORAGE_TOKEN, loginResponse.token);
 
       router.push("/");
